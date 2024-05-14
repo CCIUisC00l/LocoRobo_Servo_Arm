@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:leonardo",
+    "programmer": "avrisp",
+    "port": "COM6",
+    "sketch": "Loco_Robo_test.ino"
+}

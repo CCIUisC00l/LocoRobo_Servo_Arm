@@ -1,0 +1,442 @@
+So you've taken it upon yourself to learn how to code in the adaption of C++ that Arduino IDE uses. Lets get started!
+
+Index:
+
+    1: Basics of the Language
+    
+    2: Robot specific functions
+
+    3: Advanced Concepts
+
+
+1: Basics of the Language
+
+
+
+    Quick Reference:
+
+    In this section, you will find a list of some of the most common elements in the standard Arduino API. This will help you get familiar with some key building blocks.
+
+    To explore the whole Arduino API, please refer to the Arduino Language Reference, an in-depth wiki maintained by 
+    Arduino and its community. You will find hundreds of entries, accompanied by code examples and elaborate descriptions.
+
+
+    General
+        setup()
+        The setup() function is where you make program configurations.
+
+
+        void setup() {
+            //program configurations here
+        }
+
+        loop()
+        The loop() function is where your main program is stored. It will run as long   as    your board is powered.
+
+
+        void loop() {
+            //main program here
+        }
+
+        delay()
+        The delay() function pauses the program for a set number of milliseconds.
+
+        The classic blink sequence is found in the snippet below:
+
+
+        void loop() {
+
+           digitalWrite(LED, HIGH); //turn on an LED
+           delay(1000); //as program is paused, with the LED on
+           digitalWrite(LED, LOW); //program is unpaused, and the LED is turned off
+           delay(1000); //program is paused, with the LED off
+
+        }
+
+        The delay() function is an incredibly useful function, and you will find it in almost all examples. But, for efficiency of the code, 
+        it is not the best option, as it prevents the Arduino from doing anything for the duration of the delay.
+
+        For this, we can use the millis() function.
+
+        millis()
+
+        The millis() function is a bit more advanced, but an incredibly resourceful function. It allows you to have multiple events happening simultaneously, 
+        without pausing the program. This is done by measuring time (in milliseconds) passed since the program started.
+
+        Then, with the use of intervals and continuously storing the time for last event, a simple algorithm can be made to have events happening at specific times without pausing the program.
+
+        See the example below:
+
+
+        unsigned long previousMillis_1 = 0; //store time for first event
+        unsigned long previousMillis_2 = 0; //store time for second event
+
+        const long interval_1 = 1000; //interval for first event
+        const long interval_2 = 2000; //interval for second event
+
+
+        void setup(){
+
+        }
+
+        void loop() {
+
+        //check time since program started, and store in "currentMillis"
+        unsigned long currentMillis = millis();
+
+           //conditional that checks whether 1 second has passed since last event
+           if (currentMillis - previousMillis_1 >= interval_1) {
+                previousMillis_1 = millis();
+               //execute a piece of code, every *1 second*
+           }
+
+           //conditional that checks whether 2 seconds have passed since last event
+           if (currentMillis - previousMillis_2 >= interval_2) {
+                previousMillis_2 = millis();
+            //execute a piece of code, every *2 seconds*
+           }
+
+        }
+
+        While the millis() function is a more advanced concept than the delay()     function, it is a good to start practicing it early on.
+
+
+    Functions
+
+        Learn more about Arduino functions.
+
+        You can create custom functions that either just executes code and returns to   the   program, or that returns a result.
+
+        Example of a void function that does not return:
+
+
+        int x;
+
+        void loop(){
+            thisFunction(); //execute the function
+        }
+
+        void thisFunction() {
+            x++; //increase x by 1 each time function is run.
+        }
+
+        Example of a type int function that returns a value.
+
+
+        int value;
+
+        void setup(){
+
+        }
+
+        void loop(){
+            value = returnFunction();
+        }
+
+        int returnFunction() {
+            int returnValue = 5 + 2;
+            return returnValue;
+        }
+
+
+    Variable Definition:
+
+        Variables can either be created locally or globally. Variables that are defined in the loop() are considered local, and variables defined at the top of your sketch are considered global.
+
+
+        int sensorReading = x; //global variable
+
+        void setup(){
+
+        }
+
+        void loop(){
+            int sensorReading = x; //local variable
+        }
+
+        Data Types
+        See all data types in the Language Reference.
+
+        There are several data types available for use, and below are some of the most common:
+
+
+        bool 
+        byte
+        char
+        double
+        float
+        int
+        long
+        short
+        String
+        To store data in for example an int (integer):
+
+
+        int exampleNumber = 25;
+        For numbers with a lot of decimals, we can use float:
+
+
+        float exampleNumber = 22.2123002;
+        Or to store a string, we can use the String function:
+
+
+        String exampleSentence = "This is a string!";
+        For simple switches and true/false, we use booleans:
+
+
+        bool exampleSwitch = true; // true/false
+
+
+    Serial Communication:
+
+        Serial communication is essential to Arduino programming, as it is the easiest way to know what goes on on your board.
+
+        For this, we can use the Serial class.
+
+        Serial.begin()
+        Initializes serial communication between board & computer. This is defined in the void setup() function, where you also specify baud rate (speed of communication).
+
+
+        void setup() {
+            Serial.begin(9600);
+        }
+        Serial.print()
+        Prints data to the serial port, which can be viewed in the Arduino IDE Serial Monitor tool.
+
+
+        void loop() {
+            Serial.print();
+        }
+        Serial.read()
+        Reads the incoming serial data.
+
+
+        void loop() {
+            int incomingByte = Serial.read();
+        }
+
+
+    GPIO / Pin Management:
+
+        Configuring, controlling and reading the state of a digital/analog pin on an    Arduino.
+
+        pinMode()
+        Configures a digital pin to behave as an input or output. Is configured inside  the  void setup() function.
+
+
+        pinMode(pin, INPUT); //configures pin as an input
+        pinMode(pin, OUTPUT); //configures pin as an output
+        pinMode(pin, INPUT_PULLUP); //enables the internal pull-up resistor
+        You can read more about digital pins in the article about Digital Pins.
+
+        digitalRead()
+        Reads the state of a digital pin. Used to for example detect a button click.
+
+
+        int state = digitalRead(pin); //store the state in the "state" variable
+        digitalWrite()
+        Writes a high or low state to a digital pin. Used to switch on or off a component.
+
+
+        digitalWrite(pin, HIGH); // writes a high (1) state to a pin (aka turn it on)
+        digitalWrite(pin, LOW); // writes a low (0) state to a pin (aka turn it off)
+        analogRead()
+
+        Reads the voltage of an analog pin, and returns a value between 0-1023 (10-bit resolution). Used to read analog components.
+
+
+        sensorValue = analogRead(A1); //stores reading of A1 in "sensorValue" variable
+        analogWrite()
+        Writes a value between 0-255 (8-bit resolution). Used for dimming lights or setting the speed of a motor. Also referred to as PWM, or Pulse Width Modulation.
+
+
+        analogWrite(pin, value); //write a range between 0-255 to a specific pin
+        PWM is only available on specific pins (marked with a "~" symbol).
+
+
+    Structure:
+
+        The structure of the Arduino API is based on C++, and can be considered the building blocks of a program.
+
+
+    Conditionals:
+
+        Conditionals are some of the most popular used elements in any program. In Arduino, a typical conditional consists of an if and else statement.
+
+
+        if(variable == true){
+            //do something
+        }
+        else {
+            //do something else
+        }
+
+        You can make use of several if/else statements in your code.
+
+        Loops / Iterations
+        The for and while loops are commonly used in programs, to execute a block of code for a set number of times, or while a condition is met.
+
+        A basic use of a while loop to execute a block of code while variable is true.
+
+
+        while (variable == true) {
+            //do something
+        }
+
+        A basic use of a for loop is to execute a block of code a custom number of times (in this case, 10).
+
+
+        for (int x = 0; x < 10; x++) {
+              //do something 10 times
+          }
+
+        To break out of a loop, you can use break. In the snippet below, if a condition is met (variable is true), we break out of the loop.
+
+
+        for (int x = 0; x <= 10; x++) {
+              if(variable == true) {
+                  break;
+              }
+          }
+
+
+    Arithmetic Operators:
+
+        Arithmetic operators are used for addition, subtraction, multiplication, division and other mathematical calculations.
+
+
+        int x = 5;
+        int y = 2;
+
+        x + y; //result is 7
+        x * y; //result is 10
+        x - y; //result is 3
+
+
+    Comparison Operators:
+
+        Comparison operators are used for comparing one property to another, and are a key component of a conditional statement.
+
+        There are several comparison operators:
+
+
+        != //not equal to
+        < //less than
+        <= //less than or equal to
+        == //equal to
+        > //greater than
+        >= //greater than or equal to
+        To use them in a conditional, see the following example:
+
+
+        if(value > 10) {
+            //do something
+        }
+        Boolean Operators
+        Boolean operators (logical NOT !, AND && and OR ||) can for example be used for more advanced conditionals.
+
+        To use the AND && operator:
+
+
+        if(value > 10 && otherValue > 10){
+            //do something if only if *both* conditions are met
+        }
+        To use the OR || operator:
+
+
+        if(value > 10 || otherValue > 10){
+            //do something if a one *or* the other condition is met
+        }
+        To use the NOT ! operator:
+
+
+        if(!value){
+            //do something if value is false (!)
+    }
+
+
+    Compound Operators:
+
+        Compound operators consists of two operators, which are used to perform two operations in the same statement. This can for example be to add + and assign = a value at the same time.
+
+        Here are some examples:
+
+
+        x = 5;
+        y = 2;
+
+        x++; //increase by one, so x is now 6
+        x--; //decrease by one, so x is now 4
+
+        x += y; //x is now 7 (add and assign)
+        x -= y; //x is now 3 (subtract and assign)
+        x *= y; //x is now 10 (multiply and assign)
+
+
+
+2: Robot Specific Functions
+
+	set_servos:
+
+		This function attaches all the servo instances to specificpins on the arduino and it needs to be called in the setup function 
+		of your sketch.
+
+	robot_reset:
+		
+		Calling this function sets all joints on the robot to the middle and opens the claw.
+
+	get_pos:
+
+		This function updates the global position variables for all of the joints
+
+	print_pos:
+
+		This acts just like get_pos, but it prints the positions to the serial monitor as well
+
+	mg:
+		This function allows the robot to be moved to user defined positions.
+		to use this, you set up an array of 5 integers as pictured below
+
+	<><><><><><><><><><><><><><><><><><><><><><> NOTE <><><><><><><><><><><><><><><><><><><><><><><><><>
+
+	     The positions defined are in microseconds that are passed the the writeMicroseconds function
+	     This is because the normal write funtion does not work as exected. The travel of each servo
+	     Can be found in the Robot_operations.h file, or in the reference at the end of this document
+
+                      ------------------------------------------------------------------
+                      |   Base    |   servo_2   |   servo_3   |   servo_4   |   Claw   |
+                      |-----------|-------------|-------------|-------------|----------|
+                      |   1200    |     900     |     2000    |     500     |   1000   |
+                      ------------------------------------------------------------------
+
+                      array = [1200, 900, 2000, 500, 1000];  // Makes an array to pass to the motion group funtion
+
+                      List of data must have a shape of 5. If you want to keep the current position of a servo,
+                      Set the 
+                                      
+                      mg(array, order<optional>, wait<optional>);   // passing the array as a parameter to the mg function
+
+                      ------------------------------------------------------------------------------------------
+                      |    PASSING A ZERO TO AN INDEX IN THE mg ARRAY RESULTS IN NO MOVEMENT ON THAT SERVO     |
+                      ------------------------------------------------------------------------------------------
+			
+		     Pass the positon array (which is the array defined as above) as the first parameter in the function
+
+		     To use the order parameter, pass an array of 5 integers. Executes the movement in the order specified 
+		     From the order array. The order list should have the numbers 0, 1, 2, 3, and 4. 0 will move the base.
+		     4 will move the Claw.
+
+		     -----------------------------------------------------
+                     		         Example
+		     -----------------------------------------------------
+
+		     order = {3, 1, 2, 0, 4} will execute in the order:
+		     servo_4, servo_2, servo_3, Base, Claw
+
+		     Pass to the wait parameter an integer in miliseconds that wait that amount of time between the movement of
+		     each joint
+
+
+
+
+
